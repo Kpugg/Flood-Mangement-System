@@ -2,7 +2,13 @@ from EmulatorGUI import GPIO
 import time
 import random
 import traceback
+import requests
 from pnhLCD1602 import LCD1602  # Import thư viện LCD
+
+# API Key của ThingSpeak
+THINGSPEAK_API_KEY = "EBTUOCJ48KO0KBHI"  # Thay thế bằng API Key của bạn
+THINGSPEAK_URL = "https://api.thingspeak.com/update"
+
 
 # Khởi tạo màn hình LCD
 lcd = LCD1602()
@@ -15,8 +21,25 @@ def generate_water_level():
 def display_lcd_data(water_level):
     # Hiển thị dữ liệu mực nước lên LCD
     lcd.clear()
-    lcd.write_string(f"Water Level:")
-    lcd.write_string(f"{water_level:.1f} cm")  # Hiển thị mực nước với 1 chữ số sau dấu phẩy
+    # Kiểm tra mực nước có đạt mức cảnh báo nguy hiểm hay không
+    if water_level <= 20.0:
+        lcd.write_string("DANGEROUS!")
+        lcd.write_string(f"{water_level:.1f} m")  # Hiển thị mực nước với 1 chữ số sau dấu phẩy
+    else:
+        lcd.write_string("Water Level:")
+        lcd.write_string(f"{water_level:.1f} m") # Hiển thị mực nước với 1 chữ số sau dấu phẩy
+
+def send_data_to_thingspeak(water_level):
+    # Tạo payload gửi dữ liệu lên ThingSpeak
+    payload = {"api_key": THINGSPEAK_API_KEY, 'field1': water_level}
+    try:
+        response = requests.get(THINGSPEAK_URL, params=payload)
+        if response.status_code == 200:
+            print(f"Sending data successfully: {water_level} m")
+        else:
+            print(f"Sending data failed. Response code: {response.status_code}")
+    except Exception as e:
+        print(f"Error sending data to ThingSpeak: {str(e)}")
 
 def Main():
     try:
@@ -47,6 +70,7 @@ def Main():
                 GPIO.output(21, GPIO.HIGH)
                 water_level = generate_water_level()
                 display_lcd_data(water_level)
+                send_data_to_thingspeak(water_level)
                 time.sleep(1)
 
             if GPIO.input(24) == True:

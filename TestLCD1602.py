@@ -9,9 +9,14 @@ if __name__ == "__main__":
 
         lcd.clear()
         # Hiển thị cả hai dòng cùng lúc
-        lcd.write_string("TIEU DE VAN BAN")
+        lcd.write_string("TIEU DE VAN BAN abcjhfwlfhskdfslfkdsf sfsdfdsfnsfsl jsfjdlfsnfmdnsmfsd")
         lcd.set_cursor(1, 0)  # Đặt con trỏ ở dòng thứ 2
-        lcd.write_string("9999999999999989")
+        lcd.write_string("TIEU DE VAN BAN abcjhfwlfhskdfslfkdsf sfsdfdsfnsfsl jsfjdlfsnfmdnsmfsd")
+        lcd.set_cursor(2, 0)
+        lcd.write_string("TIEU DE VAN BAN abcjhfwlfhskdfslfkdsf sfsdfdsfnsfsl jsfjdlfsnfmdnsmfsd")
+        lcd.set_cursor(3, 0)
+        lcd.write_string("TIEU DE VAN BAN abcjhfwlfhskdfslfkdsf sfsdfdsfnsfsl jsfjdlfsnfmdnsmfsd")
+        lcd.set_cursor(4, 0)
         pygame.time.delay(3000)  # Hiển thị trong 3 giây
         lcd.backlight_off()
         pygame.time.delay(1000)
