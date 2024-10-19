@@ -14,7 +14,7 @@ class LCD1602:
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("LCD1602")
         self.font = pygame.font.Font(pygame.font.match_font('courier'), 20)
-        self.lines = [""] * 16  # 16 dòng
+        self.lines = [""] * 160  # 16 dòng
         self.backlight = True
         self.cursor_visible = False
         self.cursor_position = (0, 0)
@@ -22,16 +22,35 @@ class LCD1602:
         self.clear()
 
     def clear(self):
-        self.lines = [""] * 16  # Đặt lại tất cả các dòng thành rỗng
+        self.lines = [""] * 18  # Đặt lại tất cả các dòng thành rỗng
         self.display()
 
+    # def write_string(self, text):
+    #     # Ghi chuỗi vào dòng tiếp theo nếu còn chỗ
+    #     for i in range(16):
+    #         if len(self.lines[i]) == 0:
+    #             self.lines[i] = text[:160]  # Chỉ ghi tối đa 16 ký tự vào mỗi dòng
+    #             break
+    #     self.display()
     def write_string(self, text):
-        # Ghi chuỗi vào dòng tiếp theo nếu còn chỗ
-        for i in range(16):
-            if len(self.lines[i]) == 0:
-                self.lines[i] = text[:160]  # Chỉ ghi tối đa 16 ký tự vào mỗi dòng
-                break
+    # Cắt chuỗi thành từng đoạn 32 ký tự
+        chunks = [text[i:i+32] for i in range(0, len(text), 32)]
+
+        for chunk in chunks:
+        # Kiểm tra nếu tất cả các dòng đều đã được điền (không rỗng) thì cuộn lên
+            if all(line != "" for line in self.lines):
+            # Loại bỏ dòng đầu tiên (cuộn lên) và thêm dòng mới ở cuối
+                self.lines.pop(0)
+
+        # Thêm đoạn chuỗi vào dòng trống tiếp theo
+            for i in range(len(self.lines)):
+                if len(self.lines[i]) == 0:
+                    self.lines[i] = chunk  # Ghi chuỗi con (chunk) vào mỗi dòng
+                    break
+
+        # Hiển thị lên LCD sau khi ghi dữ liệu
         self.display()
+
 
     def write_char(self, char):
         row, col = self.cursor_position
